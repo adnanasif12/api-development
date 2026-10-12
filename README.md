@@ -3,9 +3,9 @@
 A REST API for a blog application with three access levels: **Admin**, **User** and **Guest**.
 Built with **Node.js, Express, MySQL (Sequelize)** and **JWT** authentication.
 
-> 📮 **Postman Documentation:** [https://documenter.getpostman.com/view/50581521/2sBYHRU1Wg](https://documenter.getpostman.com/view/50581521/2sBYHRU1Wg)
+> 📮 **Postman Documentation:** [https://documenter.getpostman.com/view/50581521/2sBYHRU1Wj](https://documenter.getpostman.com/view/50581521/2sBYHRU1Wj)
 >
-> 📦 **Postman Collection:** [postman/blog-api.postman_collection.json](postman/blog-api.postman_collection.json)
+> 📦 **Postman Collection (JSON):** [Google Drive link](https://drive.google.com/file/d/1TViPxFOwMX-c9ixf6QirD2WcSA10XddX/view?usp=sharing) | [postman/blog-api.postman_collection.json](postman/blog-api.postman_collection.json)
 
 ## Features
 
@@ -107,8 +107,8 @@ Protected routes need the header: `Authorization: Bearer <token>`
 
 ## Postman
 
-- Documentation: [https://documenter.getpostman.com/view/50581521/2sBYHRU1Wg](https://documenter.getpostman.com/view/50581521/2sBYHRU1Wg)
-- Collection file: [postman/blog-api.postman_collection.json](postman/blog-api.postman_collection.json)
+- Documentation: [https://documenter.getpostman.com/view/50581521/2sBYHRU1Wj](https://documenter.getpostman.com/view/50581521/2sBYHRU1Wj)
+- Collection file: [Google Drive link](https://drive.google.com/file/d/1TViPxFOwMX-c9ixf6QirD2WcSA10XddX/view?usp=sharing) | [postman/blog-api.postman_collection.json](postman/blog-api.postman_collection.json)
 
 Import the collection and run the whole collection in the Runner. Every run registers fresh users, and tokens and IDs
 are saved to collection variables automatically. One-time setup: create the Postman admin with
