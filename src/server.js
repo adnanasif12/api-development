@@ -8,6 +8,7 @@ async function start() {
     await ensureDatabase();
     await sequelize.authenticate();
     await sequelize.sync(); // creates the users and blogs tables if missing
+    await require('./models').User.sync({ alter: true }); // adds new user columns (profileImage, reset token)
     console.log('Database connected.');
 
     app.listen(config.port, () => {

@@ -1,4 +1,4 @@
-const { isNonEmptyString, isTooLong, MAX_LENGTH, MIN_PASSWORD_LENGTH } = require('./helpers');
+const { isNonEmptyString, isTooLong, MAX_LENGTH, passwordProblems } = require('./helpers');
 
 exports.updateProfileValidator = (req) => {
   const { firstname, lastname } = req.body;
@@ -14,11 +14,7 @@ exports.updateProfileValidator = (req) => {
 };
 
 exports.updatePasswordValidator = (req) => {
-  const { password } = req.body;
-  if (typeof password !== 'string' || password.length < MIN_PASSWORD_LENGTH) {
-    return [`password must be at least ${MIN_PASSWORD_LENGTH} characters long.`];
-  }
-  return [];
+  return passwordProblems(req.body.password);
 };
 
 exports.updateStatusValidator = (req) => {

@@ -1,4 +1,7 @@
+const fs = require('fs');
+const path = require('path');
 const bcrypt = require('bcryptjs');
+const { UPLOAD_DIR } = require('../middleware/upload.middleware');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 const asyncHandler = require('../utils/asyncHandler');
@@ -63,4 +66,16 @@ exports.updatePassword = asyncHandler(async (req, res) => {
   const hashed = await bcrypt.hash(req.body.password, 10);
   await User.update({ password: hashed }, { where: { id: req.user.id } });
   res.status(200).json({ message: 'Password updated successfully.' });
+});
+
+// PATCH /api/users/profile/image   (multipart/form-data, field "image")
+exports.updateProfileImage = asyncHandler(async (req, res) => {
+  if (!req.file) throw new ApiError(400, 'Please choose an image (field name: image).');
+
+  const previous = req.user.profileImage;
+  req.user.profileImage = `/uploads/profiles/${req.file.filename}`;
+  await req.user.save();
+
+  if (previous) fs.unlink(path.join(UPLOAD_DIR, path.basename(previous)), () => {}); // best-effort cleanup
+  res.status(200).json({ message: 'Profile image updated successfully.', user: req.user });
 });

@@ -1,4 +1,4 @@
-const { isNonEmptyString, isValidEmail, isTooLong, MAX_LENGTH, MIN_PASSWORD_LENGTH } = require('./helpers');
+const { isNonEmptyString, isValidEmail, isTooLong, MAX_LENGTH, passwordProblems } = require('./helpers');
 
 exports.registerValidator = (req) => {
   const { firstname, lastname, email, password } = req.body;
@@ -9,10 +9,14 @@ exports.registerValidator = (req) => {
   if (isTooLong(lastname, MAX_LENGTH.name)) errors.push(`lastname must be at most ${MAX_LENGTH.name} characters.`);
   if (!isValidEmail(email)) errors.push('A valid email is required.');
   else if (isTooLong(email, MAX_LENGTH.email)) errors.push(`email must be at most ${MAX_LENGTH.email} characters.`);
-  if (typeof password !== 'string' || password.length < MIN_PASSWORD_LENGTH) {
-    errors.push(`password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
-  }
+  errors.push(...passwordProblems(password));
   return errors;
+};
+
+exports.forgotPasswordValidator = (req) => (isValidEmail(req.body.email) ? [] : ['A valid email is required.']);
+
+exports.resetPasswordValidator = (req) => {
+  return passwordProblems(req.body.password);
 };
 
 exports.loginValidator = (req) => {

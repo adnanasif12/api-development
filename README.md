@@ -60,7 +60,7 @@ cp .env.example .env
 npm run dev        # development (nodemon)
 npm start          # production
 
-# 4. Create an admin user (admin@example.com / password123)
+# 4. Create an admin user (admin@example.com / password123; override with ADMIN_EMAIL / ADMIN_PASSWORD)
 npm run seed:admin
 ```
 
@@ -87,10 +87,22 @@ UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
 | 11 | GET    | `/api/blogs/:id`            | Public       | Get a specific blog              |
 | 12 | PUT    | `/api/blogs/update/:id`     | User / Admin | Update a blog (owner or admin)   |
 | 13 | DELETE | `/api/blogs/delete/:id`     | User / Admin | Delete a blog (owner or admin)   |
+| 14 | POST   | `/api/auth/forgot-password` | Public       | Email a password-reset link (body: `email`) |
+| 15 | PATCH  | `/api/auth/reset-password/:token` | Public | Set a new password using the emailed token (body: `password`) |
+| 16 | PATCH  | `/api/users/profile/image`  | User / Admin | Upload profile image (`multipart/form-data`, field `image`, JPG/PNG/WEBP, max 2 MB) |
 
 `DELETE /api/blogs/:id` is also supported as an alias.
 
 Protected routes need the header: `Authorization: Bearer <token>`
+
+### Password rules
+New passwords (register, reset, change) must be **8-64 characters** and contain an uppercase letter, a lowercase letter, a number and a special character, with no spaces. Login does not apply these rules, so older accounts keep working.
+
+### Password reset and email
+`POST /api/auth/forgot-password` always returns the same message (it never reveals whether an email exists). The reset token is valid for 1 hour, is stored hashed, and can be used once. The link points to `${FRONTEND_URL}/reset-password/<token>`. Configure `SMTP_*` in `.env` to send real emails (for Gmail use an App Password); without SMTP the link is printed in the server console.
+
+### Profile images
+Uploaded files are saved in `uploads/profiles/` (git-ignored) and served from `/uploads/profiles/<file>`. The user's `profileImage` and each blog author's `profileImage` are returned by the API.
 
 ## Status Codes
 

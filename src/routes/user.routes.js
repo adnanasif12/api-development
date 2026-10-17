@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const controller = require('../controllers/user.controller');
 const { authenticate, authorize } = require('../middleware/auth.middleware');
+const upload = require('../middleware/upload.middleware');
 const { validate, validateId } = require('../middleware/validate.middleware');
 const {
   updateProfileValidator,
@@ -15,6 +16,7 @@ router.use(authenticate);
 // NOTE: these must be declared BEFORE "/:id" so "profile" is not treated as an id.
 router.get('/profile', controller.getProfile);
 router.put('/profile/update', validate(updateProfileValidator), controller.updateProfile);
+router.patch('/profile/image', upload.single('image'), controller.updateProfileImage);
 router.patch('/password', validate(updatePasswordValidator), controller.updatePassword);
 
 // Admin only

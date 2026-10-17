@@ -7,7 +7,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const withAuthor = {
   model: User,
   as: 'author',
-  attributes: ['id', 'firstname', 'lastname'],
+  attributes: ['id', 'firstname', 'lastname', 'profileImage'],
 };
 
 // Escape LIKE wildcards so "50%" is searched literally.
