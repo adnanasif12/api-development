@@ -6,6 +6,8 @@ Built with **Node.js, Express, MySQL (Sequelize)** and **JWT** authentication.
 > 📮 **Postman Documentation:** [https://documenter.getpostman.com/view/50581521/2sBYHRU1Wj](https://documenter.getpostman.com/view/50581521/2sBYHRU1Wj)
 >
 > 📦 **Postman Collection (JSON):** [Google Drive link](https://drive.google.com/file/d/1TViPxFOwMX-c9ixf6QirD2WcSA10XddX/view?usp=sharing) | [postman/blog-api.postman_collection.json](postman/blog-api.postman_collection.json)
+>
+> ℹ️ The collection file in this repository is the most up to date: it also covers forgot/reset password, profile-image upload and the password rules. The hosted documentation and the Drive copy may not include these newer requests yet. Run it from the terminal with `newman run postman/blog-api.postman_collection.json` (47 requests, 91 assertions).
 
 ## Features
 

@@ -171,6 +171,247 @@
               }
             }
           }
+        },
+        {
+          "name": "2c. Forgot password (registered email)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Generic message', () => pm.expect(pm.response.json().message).to.include('reset link'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Always answers with the same generic message. A reset link (valid for 1 hour, single use) is emailed, or printed in the server console when SMTP is not configured.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "2d. Forgot password (unknown email) - same response",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Same generic message', () => pm.expect(pm.response.json().message).to.include('reset link'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Must look identical to 2c so the endpoint cannot be used to discover registered emails.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nobody.{{runId}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "2e. Forgot password - invalid email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Validation error.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"not-an-email\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "2f. Reset password - invalid token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Invalid or expired message', () => pm.expect(pm.response.json().message).to.include('invalid or has expired'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/reset-password/not-a-real-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password",
+                "not-a-real-token"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "An unknown or expired token is rejected.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "2g. Reset password - weak password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Lists the missing rules', () => pm.expect(JSON.stringify(pm.response.json().errors)).to.include('uppercase'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/reset-password/not-a-real-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password",
+                "not-a-real-token"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "The password policy is checked before the token.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -573,6 +814,60 @@
               }
             }
           }
+        },
+        {
+          "name": "8b. Upload profile image",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 with profileImage, or 400 when no file is attached', () => {",
+                  "  if (pm.response.code === 200) pm.expect(pm.response.json().user.profileImage).to.match(/^\\/uploads\\/profiles\\//);",
+                  "  else pm.expect(pm.response.code).to.eql(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/profile/image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "profile",
+                "image"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "multipart/form-data, field \"image\" (JPG, PNG or WEBP, max 2 MB). In Postman choose a file for the \"image\" field to get 200 with the new profileImage path. Without a file (as in an automated run) the API answers 400.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          }
         }
       ]
     },
@@ -646,7 +941,7 @@
                   "const res = pm.response.json();",
                   "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
                   "pm.test('Created blog is in the results', () => pm.expect(res.blogs.map(b => String(b.id))).to.include(String(pm.collectionVariables.get('blogId'))));",
-                  "pm.test('Author has only id, firstname, lastname', () => res.blogs.forEach(b => pm.expect(Object.keys(b.author)).to.have.members(['id', 'firstname', 'lastname'])));"
+                  "pm.test('Author exposes only id, firstname, lastname, profileImage', () => res.blogs.forEach(b => pm.expect(Object.keys(b.author)).to.have.members(['id', 'firstname', 'lastname', 'profileImage'])));"
                 ]
               }
             }
@@ -1814,6 +2109,108 @@
               ]
             }
           }
+        },
+        {
+          "name": "N18. Register - weak password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Lists the missing rules', () => { const e = JSON.stringify(pm.response.json().errors); pm.expect(e).to.include('uppercase'); pm.expect(e).to.include('special'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Passwords need 8-64 chars with an uppercase letter, a lowercase letter, a number and a special character.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstname\": \"Weak\",\n  \"lastname\": \"Pass\",\n  \"email\": \"weak.{{runId}}@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "N19. Update own password - weak password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "password"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Same policy applies when changing the password.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"abc\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     }
@@ -1833,7 +2230,7 @@
     },
     {
       "key": "userPassword",
-      "value": "password123"
+      "value": "Password@123"
     },
     {
       "key": "runId",
